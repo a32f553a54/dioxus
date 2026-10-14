@@ -2,6 +2,10 @@
 #![doc = include_str!("../README.md")]
 #![doc(html_logo_url = "https://avatars.githubusercontent.com/u/79236386")]
 #![doc(html_favicon_url = "https://avatars.githubusercontent.com/u/79236386")]
+#![cfg_attr(
+    all(target_family = "wasm", feature = "sledgehammer"),
+    feature(simd_wasm64)
+)]
 
 /// The base class that the JS channel will extend
 pub static INTERPRETER_JS: &str = include_str!("./js/core.js");

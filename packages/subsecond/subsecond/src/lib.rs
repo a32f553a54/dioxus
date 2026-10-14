@@ -199,7 +199,7 @@
 //! - Linux (x86_64, aarch64)
 //! - macOS (x86_64, aarch64)
 //! - Windows (x86_64, arm64)
-//! - WebAssembly (wasm32)
+//! - WebAssembly (wasm64)
 //!
 //! If you have a new platform you'd like to see supported, please open an issue on the Subsecond repository.
 //! We are keen to add support for new platforms like wasm64, riscv64, and more.
@@ -547,7 +547,7 @@ pub unsafe fn apply_patch(mut table: JumpTable) -> Result<(), PatchError> {
     };
 
     // On wasm, we need to download the module, compile it, and then run it.
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_arch = "wasm64")]
     wasm_bindgen_futures::spawn_local(async move {
         use js_sys::{
             ArrayBuffer, Object, Reflect,

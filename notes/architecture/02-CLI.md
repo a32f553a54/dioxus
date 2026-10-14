@@ -24,7 +24,7 @@ Entry point: `main.rs` with async tokio runtime and `TraceController` for error 
 ## Platform Support
 
 ### Platform Enum
-- `Web` - wasm32-unknown-unknown
+- `Web` - wasm64-unknown-unknown
 - `MacOS` / `Windows` / `Linux` - Desktop webview
 - `Ios` / `Android` - Mobile webview
 - `Server` - SSR/fullstack server

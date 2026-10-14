@@ -69,7 +69,7 @@ pub fn wasm_split(args: TokenStream, input: TokenStream) -> TokenStream {
     let stmts = &item_fn.block.stmts;
 
     quote! {
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(target_arch = "wasm64")]
         #wrapper_sig {
             #(#attrs)*
             #[allow(improper_ctypes_definitions)]
@@ -105,7 +105,7 @@ pub fn wasm_split(args: TokenStream, input: TokenStream) -> TokenStream {
             unsafe { #impl_import_ident( #(#args),* ) }.await
         }
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_arch = "wasm64"))]
         #default_item
     }
     .into()
@@ -151,7 +151,7 @@ pub fn lazy_loader(input: TokenStream) -> TokenStream {
 
     quote! {
         {
-            #[cfg(target_arch = "wasm32")]
+            #[cfg(target_arch = "wasm64")]
             {
                 #[link(wasm_import_module = "./__wasm_split.js")]
                 extern "C" {
@@ -185,7 +185,7 @@ pub fn lazy_loader(input: TokenStream) -> TokenStream {
                 }
             }
 
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(not(target_arch = "wasm64"))]
             {
                 wasm_split::LazyLoader::preloaded(#name)
             }

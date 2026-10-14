@@ -10,7 +10,7 @@ use target_lexicon::{Environment, OperatingSystem, Triple};
 )]
 #[non_exhaustive]
 pub(crate) enum Platform {
-    /// Alias for `--target wasm32-unknown-unknown --renderer websys --bundle-format web`
+    /// Alias for `--target wasm64-unknown-unknown --renderer websys --bundle-format web`
     #[serde(rename = "web")]
     Web,
 

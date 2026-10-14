@@ -117,7 +117,7 @@ pub fn reqwest_error_to_request_error(err: reqwest::Error) -> RequestError {
     } else if let Some(status) = err.status() {
         RequestError::Status(message, status.as_u16())
     } else {
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_arch = "wasm64"))]
         {
             if err.is_connect() {
                 RequestError::Connect(message)
@@ -126,7 +126,7 @@ pub fn reqwest_error_to_request_error(err: reqwest::Error) -> RequestError {
             }
         }
 
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(target_arch = "wasm64")]
         {
             RequestError::Request(message)
         }

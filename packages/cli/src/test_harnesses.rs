@@ -1,7 +1,7 @@
 use crate::{BuildTargets, BundleFormat, Cli, Commands, Workspace};
 use anyhow::Result;
 use clap::Parser;
-use futures_util::{stream::FuturesUnordered, StreamExt};
+use futures_util::{StreamExt, stream::FuturesUnordered};
 use std::{
     collections::HashSet,
     fmt::Write,
@@ -10,7 +10,7 @@ use std::{
     prelude::rust_2024::Future,
 };
 use target_lexicon::Triple;
-use tracing_subscriber::{prelude::*, util::SubscriberInitExt, EnvFilter, Layer};
+use tracing_subscriber::{EnvFilter, Layer, prelude::*, util::SubscriberInitExt};
 
 #[tokio::test]
 async fn run_harness() {
@@ -29,7 +29,7 @@ async fn test_harnesses() {
             .asrt(r#"dx build"#, |targets| async move {
                 let t = targets.unwrap();
                 assert_eq!(t.client.bundle, BundleFormat::Web);
-                assert_eq!(t.client.triple, "wasm32-unknown-unknown".parse().unwrap());
+                assert_eq!(t.client.triple, "wasm64-unknown-unknown".parse().unwrap());
                 assert!(t.server.is_none());
             }),
         TestHarnessBuilder::new("harness-simple-desktop")
@@ -216,12 +216,12 @@ async fn test_harnesses() {
                     assert_eq!(s.triple, Triple::host());
                 },
             )
-            .asrt(r#"dx build @client --package harness-simple-dedicated-client @server --package harness-simple-dedicated-server --target wasm32-unknown-unknown"#, |targets| async move {
+            .asrt(r#"dx build @client --package harness-simple-dedicated-client @server --package harness-simple-dedicated-server --target wasm64-unknown-unknown"#, |targets| async move {
                 let t = targets.unwrap();
                 assert_eq!(t.client.bundle, BundleFormat::Web);
                 let s = t.server.unwrap();
                 assert_eq!(s.bundle, BundleFormat::Server);
-                assert_eq!(s.triple, "wasm32-unknown-unknown".parse().unwrap());
+                assert_eq!(s.triple, "wasm64-unknown-unknown".parse().unwrap());
             }),
         TestHarnessBuilder::new("harness-renderer-swap")
             .deps(r#"dioxus = { workspace = true, features = ["fullstack"] }"#)
@@ -269,7 +269,7 @@ async fn test_harnesses() {
             .asrt(r#"dx build --web"#, |targets| async move {
                 let t = targets.unwrap();
                 assert_eq!(t.client.bundle, BundleFormat::Web);
-                assert_eq!(t.client.triple, "wasm32-unknown-unknown".parse().unwrap());
+                assert_eq!(t.client.triple, "wasm64-unknown-unknown".parse().unwrap());
                 let server = t.server.unwrap();
                 assert_eq!(server.bundle, BundleFormat::Server);
                 assert_eq!(server.triple, Triple::host());

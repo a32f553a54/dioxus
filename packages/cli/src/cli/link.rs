@@ -209,7 +209,7 @@ impl LinkAction {
                 };
 
                 let arch = match triple.architecture {
-                    target_lexicon::Architecture::Wasm32 => object::Architecture::Wasm32,
+                    target_lexicon::Architecture::Wasm64 => object::Architecture::Wasm64,
                     target_lexicon::Architecture::Wasm64 => object::Architecture::Wasm64,
                     target_lexicon::Architecture::X86_64 => object::Architecture::X86_64,
                     target_lexicon::Architecture::Arm(_) => object::Architecture::Arm,

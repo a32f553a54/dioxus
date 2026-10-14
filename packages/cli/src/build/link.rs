@@ -342,7 +342,7 @@ impl BuildRequest {
         let mut out_args = vec![];
 
         match self.linker_flavor() {
-            // wasm32-unknown-unknown -> use wasm-ld (gnu-lld)
+            // wasm64-unknown-unknown -> use wasm-ld (gnu-lld)
             //
             // We need to import a few things - namely the memory and ifunc table.
             //
@@ -1160,7 +1160,7 @@ impl BuildRequest {
         // - nix requires the object crate
         let mut jump_table = match triple.operating_system {
             OperatingSystem::Windows => create_windows_jump_table(patch, cache)?,
-            _ if triple.architecture == Architecture::Wasm32 => {
+            _ if triple.architecture == Architecture::Wasm64 => {
                 create_wasm_jump_table(patch, cache)?
             }
             _ => create_native_jump_table(patch, triple, cache)?,
@@ -1169,7 +1169,7 @@ impl BuildRequest {
         // root_dir: &Path,
         //     base_path: Option<&str>,
         // Rebase the wasm binary to be relocatable once the jump table is generated
-        if triple.architecture == target_lexicon::Architecture::Wasm32 {
+        if triple.architecture == target_lexicon::Architecture::Wasm64 {
             // Make sure we use the dir relative to the public dir, so the web can load it as a proper URL
             //
             // ie we would've shipped `/Users/foo/Projects/dioxus/target/dx/project/debug/web/public/wasm/lib.wasm`
@@ -1221,7 +1221,7 @@ impl BuildRequest {
                 OperatingSystem::Linux => LinkerFlavor::Gnu,
                 OperatingSystem::Windows => LinkerFlavor::Msvc,
                 _ => match self.triple.architecture {
-                    target_lexicon::Architecture::Wasm32 => LinkerFlavor::WasmLld,
+                    target_lexicon::Architecture::Wasm64 => LinkerFlavor::WasmLld,
                     target_lexicon::Architecture::Wasm64 => LinkerFlavor::WasmLld,
                     _ => LinkerFlavor::Unsupported,
                 },

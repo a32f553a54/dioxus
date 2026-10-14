@@ -70,7 +70,7 @@ impl<S> IntoRequest for MultipartFormData<S> {
             // blob as the body of the request. This handles setting the correct headers, wiring
             // up file uploads as streams, and encoding the request.
             #[cfg(feature = "web")]
-            if cfg!(target_arch = "wasm32") {
+            if cfg!(target_arch = "wasm64") {
                 let data = self._client.clone().ok_or_else(|| {
                     RequestError::Builder("Failed to get FormData from event".into())
                 })?;
@@ -93,7 +93,7 @@ impl<S> IntoRequest for MultipartFormData<S> {
 
             // On non-web platforms, we actually need to read the values out of the FormData
             // and construct a multipart form body manually.
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(not(target_arch = "wasm64"))]
             {
                 let data = self._client.clone().ok_or_else(|| {
                     RequestError::Builder("Failed to get FormData from event".into())
@@ -102,7 +102,7 @@ impl<S> IntoRequest for MultipartFormData<S> {
                 return _req.send_multipart(&data).await;
             }
 
-            unimplemented!("Non web wasm32 clients are not supported yet")
+            unimplemented!("Non web wasm64 clients are not supported yet")
         }
     }
 }

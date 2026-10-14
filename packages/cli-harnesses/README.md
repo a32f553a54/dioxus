@@ -40,7 +40,7 @@ Platforms are "super triples", meaning they contain information about
 - enabled features
 
 By default, the --platform presets correspond to:
-- web:          bundle(web), triple(wasm32), serve(http-serve), features("web")
+- web:          bundle(web), triple(wasm64), serve(http-serve), features("web")
 - desktop:      alias to mac/win/linux
 - mac:          bundle(mac), triple(host), serve(appbundle-open), features("desktop")
 - windows:      bundle(exefolder), triple(host), serve(run-exe), features("desktop")

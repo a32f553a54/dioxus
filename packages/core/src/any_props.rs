@@ -81,7 +81,7 @@ impl<F: ComponentFunction<P, M> + Clone, P: Clone + 'static, M: 'static> AnyProp
                 Err(err) => {
                     // on wasm this massively bloats binary sizes and we can't even capture the panic
                     // so do nothing
-                    #[cfg(not(target_arch = "wasm32"))]
+                    #[cfg(not(target_arch = "wasm64"))]
                     {
                         tracing::error!("Panic while rendering component `{_name}`: {err:?}");
                     }

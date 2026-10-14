@@ -146,7 +146,7 @@ impl Doctor {
         }
 
         // toolchains
-        let mut has_wasm32_unknown_unknown = "❌";
+        let mut has_wasm64_unknown_unknown = "❌";
         let mut has_aarch64_linux_android = "❌";
         let mut has_i686_linux_android = "❌";
         let mut has_armv7_linux_androideabi = "❌";
@@ -155,8 +155,8 @@ impl Doctor {
         let mut has_aarch64_apple_ios = "❌";
         let mut has_aarch64_apple_ios_sim = "❌";
         let mut has_aarch64_apple_darwin = "❌";
-        if rustlib.join("wasm32-unknown-unknown").exists() {
-            has_wasm32_unknown_unknown = "✅";
+        if rustlib.join("wasm64-unknown-unknown").exists() {
+            has_wasm64_unknown_unknown = "✅";
         }
         if rustlib.join("aarch64-linux-android").exists() {
             has_aarch64_linux_android = "✅";
@@ -247,7 +247,7 @@ impl Doctor {
  java_home: {HINT_STYLE}{java_home}{HINT_STYLE:#}
 
 {LINK_STYLE}Toolchains{LINK_STYLE:#}
- {HINT_STYLE}{has_wasm32_unknown_unknown}{HINT_STYLE:#} wasm32-unknown-unknown {HINT_STYLE}(web){HINT_STYLE:#}
+ {HINT_STYLE}{has_wasm64_unknown_unknown}{HINT_STYLE:#} wasm64-unknown-unknown {HINT_STYLE}(web){HINT_STYLE:#}
  {HINT_STYLE}{has_aarch64_linux_android}{HINT_STYLE:#} aarch64-linux-android {HINT_STYLE}(android){HINT_STYLE:#}
  {HINT_STYLE}{has_i686_linux_android}{HINT_STYLE:#} i686-linux-android {HINT_STYLE}(android){HINT_STYLE:#}
  {HINT_STYLE}{has_armv7_linux_androideabi}{HINT_STYLE:#} armv7-linux-androideabi {HINT_STYLE}(android){HINT_STYLE:#}

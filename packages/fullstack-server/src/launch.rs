@@ -25,7 +25,7 @@ use subsecond::HotFn;
 use tokio_util::either::Either;
 use tower::{Service, ServiceExt as _};
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_arch = "wasm64"))]
 use {
     dioxus_core::{RenderError, VNode},
     tokio::net::TcpListener,
@@ -42,7 +42,7 @@ pub fn launch(root: BaseComp) -> ! {
 /// Launch a fullstack app with the given root component, contexts, and config.
 #[allow(unused)]
 pub fn launch_cfg(root: BaseComp, contexts: ContextList, platform_config: Vec<Box<dyn Any>>) -> ! {
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_arch = "wasm64"))]
     tokio::runtime::Runtime::new()
         .unwrap()
         .block_on(async move { serve_server(root, contexts, platform_config).await });
@@ -50,7 +50,7 @@ pub fn launch_cfg(root: BaseComp, contexts: ContextList, platform_config: Vec<Bo
     unreachable!("Launching a fullstack app should never return")
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_arch = "wasm64"))]
 async fn serve_server(
     original_root: fn() -> Result<VNode, RenderError>,
     contexts: Vec<Box<dyn Fn() -> Box<dyn Any> + Send + Sync>>,

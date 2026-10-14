@@ -1,10 +1,10 @@
 use anyhow::Context;
 use itertools::Itertools;
 use object::{
+    Endianness, Object, ObjectSection, ObjectSymbol, SymbolFlags, SymbolKind, SymbolScope,
     macho::{self},
     read::File,
     write::{MachOBuildVersion, SectionId, StandardSection, Symbol, SymbolId, SymbolSection},
-    Endianness, Object, ObjectSection, ObjectSymbol, SymbolFlags, SymbolKind, SymbolScope,
 };
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use std::{
@@ -33,7 +33,9 @@ pub enum PatchError {
     #[error("Failed to read file: {0}")]
     ReadFs(#[from] std::io::Error),
 
-    #[error("No debug symbols in the patch output. Check your profile's `opt-level` and debug symbols config.")]
+    #[error(
+        "No debug symbols in the patch output. Check your profile's `opt-level` and debug symbols config."
+    )]
     MissingSymbols,
 
     #[error("Failed to parse wasm section: {0}")]
@@ -199,7 +201,7 @@ impl HotpatchModuleCache {
             //
             // We need to take an extra step to account for merged functions by mapping function index
             // to a set of functions that point to the same index.
-            _ if triple.architecture == Architecture::Wasm32 => {
+            _ if triple.architecture == Architecture::Wasm64 => {
                 let bytes = std::fs::read(original)?;
                 let ParsedModule {
                     module, symbols, ..
@@ -883,7 +885,7 @@ pub fn create_undefined_symbol_stub(
         },
         match triple.architecture {
             Architecture::Aarch64(_) => object::Architecture::Aarch64,
-            Architecture::Wasm32 => object::Architecture::Wasm32,
+            Architecture::Wasm64 => object::Architecture::Wasm64,
             Architecture::X86_64 => object::Architecture::X86_64,
             _ => return Err(PatchError::UnsupportedPlatform(triple.to_string())),
         },
@@ -930,10 +932,9 @@ pub fn create_undefined_symbol_stub(
         .address;
 
     if aslr_reference < aslr_ref_address {
-        return Err(PatchError::InvalidModule(
-            format!(
-            "ASLR reference is less than the main module's address - is there a `main`?. {aslr_reference:x} < {aslr_ref_address:x}" )
-        ));
+        return Err(PatchError::InvalidModule(format!(
+            "ASLR reference is less than the main module's address - is there a `main`?. {aslr_reference:x} < {aslr_ref_address:x}"
+        )));
     }
 
     let aslr_offset = aslr_reference - aslr_ref_address;
@@ -1085,7 +1086,7 @@ pub fn create_undefined_symbol_stub(
                             // Use JMP instruction to absolute address: FF 25 followed by 32-bit offset
                             // Then the 64-bit absolute address
                             let mut code = vec![0xFF, 0x25, 0x00, 0x00, 0x00, 0x00]; // jmp [rip+0]
-                                                                                     // Append the 64-bit address
+                            // Append the 64-bit address
                             code.extend_from_slice(&abs_addr.to_le_bytes());
                             code
                         }

@@ -195,20 +195,20 @@
 
 use super::HotpatchModuleCache;
 use crate::{
-    opt::{process_file_to, AppManifest},
-    WorkspaceRustcArgs,
+    AndroidTools, BuildContext, BuildId, BundleFormat, DX_RUSTC_WRAPPER_ENV_VAR, DioxusConfig,
+    LinkAction, Platform, Renderer, Result, RustcArgs, TargetArgs, Workspace,
 };
 use crate::{
-    AndroidTools, BuildContext, BuildId, BundleFormat, DioxusConfig, LinkAction, Platform,
-    Renderer, Result, RustcArgs, TargetArgs, Workspace, DX_RUSTC_WRAPPER_ENV_VAR,
+    WorkspaceRustcArgs,
+    opt::{AppManifest, process_file_to},
 };
-use anyhow::{bail, Context};
+use anyhow::{Context, bail};
 use cargo_metadata::diagnostic::Diagnostic;
 use cargo_toml::{Profile, Profiles, StripSetting};
 use depinfo::RustcDepInfo;
 use dioxus_cli_config::PRODUCT_NAME_ENV;
 use dioxus_cli_config::{APP_TITLE_ENV, ASSET_ROOT_ENV};
-use krates::{cm::TargetKind, NodeId};
+use krates::{NodeId, cm::TargetKind};
 use manganis::BundledAsset;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use serde::Deserialize;
@@ -218,8 +218,8 @@ use std::{
     path::{Path, PathBuf},
     process::Stdio,
     sync::{
-        atomic::{AtomicUsize, Ordering},
         Arc,
+        atomic::{AtomicUsize, Ordering},
     },
     time::SystemTime,
 };
@@ -475,7 +475,7 @@ impl BuildRequest {
         - enabled features
 
         By default, the --platform presets correspond to:
-        - web:          bundle(web), triple(wasm32), serve(http-serve), features("web")
+        - web:          bundle(web), triple(wasm64), serve(http-serve), features("web")
         - desktop:      alias to mac/win/linux
         - mac:          bundle(mac), triple(host), serve(appbundle-open), features("desktop")
         - windows:      bundle(exefolder), triple(host), serve(run-exe), features("desktop")
@@ -589,7 +589,7 @@ impl BuildRequest {
                 }
                 renderer = renderer.or(Some(Renderer::Web));
                 bundle_format = bundle_format.or(Some(BundleFormat::Web));
-                triple = triple.or(Some("wasm32-unknown-unknown".parse()?));
+                triple = triple.or(Some("wasm64-unknown-unknown".parse()?));
             }
             Platform::MacOS => {
                 if main_package.features.contains_key("desktop") && renderer.is_none() {
@@ -843,12 +843,16 @@ impl BuildRequest {
             if let Some(profile_data) = workspace.cargo_toml.profile.custom.get(&profile) {
                 use cargo_toml::{DebugSetting, LtoSetting};
                 if matches!(profile_data.lto, Some(LtoSetting::None) | None) {
-                    tracing::warn!("wasm-split requires LTO to be enabled in the profile. \
-                        Please set `lto = true` in the `[profile.{profile}]` section of your Cargo.toml");
+                    tracing::warn!(
+                        "wasm-split requires LTO to be enabled in the profile. \
+                        Please set `lto = true` in the `[profile.{profile}]` section of your Cargo.toml"
+                    );
                 }
                 if matches!(profile_data.debug, Some(DebugSetting::None) | None) {
-                    tracing::warn!("wasm-split requires debug symbols to be enabled in the profile. \
-                        Please set `debug = true` in the `[profile.{profile}]` section of your Cargo.toml");
+                    tracing::warn!(
+                        "wasm-split requires debug symbols to be enabled in the profile. \
+                        Please set `debug = true` in the `[profile.{profile}]` section of your Cargo.toml"
+                    );
                 }
             }
         }
@@ -1349,14 +1353,14 @@ impl BuildRequest {
                 // otherwise, just copy it (since in release you want to distribute the framework)
                 if cfg!(any(windows, unix)) && !self.release {
                     #[cfg(windows)]
-                    std::os::windows::fs::symlink_file(from, to).with_context(|| {
-                        "Failed to symlink framework into bundle: {from:?} -> {to:?}"
-                    })?;
+                    std::os::windows::fs::symlink_file(from, to).with_context(
+                        || "Failed to symlink framework into bundle: {from:?} -> {to:?}",
+                    )?;
 
                     #[cfg(unix)]
-                    std::os::unix::fs::symlink(from, to).with_context(|| {
-                        "Failed to symlink framework into bundle: {from:?} -> {to:?}"
-                    })?;
+                    std::os::unix::fs::symlink(from, to).with_context(
+                        || "Failed to symlink framework into bundle: {from:?} -> {to:?}",
+                    )?;
                 } else {
                     std::fs::copy(from, to)?;
                 }
@@ -1851,7 +1855,7 @@ impl BuildRequest {
             // It's fine that these exist in the base module but not in the patch.
             if matches!(
                 self.triple.architecture,
-                target_lexicon::Architecture::Wasm32 | target_lexicon::Architecture::Wasm64
+                target_lexicon::Architecture::Wasm64 | target_lexicon::Architecture::Wasm64
             ) || self.triple.operating_system == OperatingSystem::Wasi
             {
                 // cargo_args.push("-Ctarget-cpu=mvp".into()); // disabled due to changes in wasm-bindgne
@@ -2718,7 +2722,7 @@ impl BuildRequest {
     pub(crate) fn is_wasm_or_wasi(&self) -> bool {
         matches!(
             self.triple.architecture,
-            target_lexicon::Architecture::Wasm32 | target_lexicon::Architecture::Wasm64
+            target_lexicon::Architecture::Wasm64 | target_lexicon::Architecture::Wasm64
         ) || self.triple.operating_system == target_lexicon::OperatingSystem::Wasi
     }
 

@@ -309,7 +309,7 @@ pub struct Websocket<In = String, Out = String, E = JsonEncoding> {
     #[allow(clippy::type_complexity)]
     _in: std::marker::PhantomData<fn() -> (In, Out, E)>,
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_arch = "wasm64"))]
     native: Option<native::SplitSocket>,
 
     #[cfg(feature = "web")]
@@ -369,7 +369,7 @@ impl<I, O, E> Websocket<I, O, E> {
     /// This method allows sending text, binary, ping, pong, and close messages directly.
     pub async fn send_raw(&self, message: Message) -> Result<(), WebsocketError> {
         #[cfg(feature = "web")]
-        if cfg!(target_arch = "wasm32") {
+        if cfg!(target_arch = "wasm64") {
             let mut sender = self
                 .web
                 .as_ref()
@@ -397,7 +397,7 @@ impl<I, O, E> Websocket<I, O, E> {
             return Ok(());
         }
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_arch = "wasm64"))]
         {
             let mut sender = self
                 .native
@@ -419,7 +419,7 @@ impl<I, O, E> Websocket<I, O, E> {
     /// Receive a raw message from the WebSocket connection.
     pub async fn recv_raw(&self) -> Result<Message, WebsocketError> {
         #[cfg(feature = "web")]
-        if cfg!(target_arch = "wasm32") {
+        if cfg!(target_arch = "wasm64") {
             let mut conn = self.web.as_ref().unwrap().receiver.lock().await;
             return match conn.next().await {
                 Some(Ok(WsMessage::Text(text))) => Ok(Message::Text(text)),
@@ -429,7 +429,7 @@ impl<I, O, E> Websocket<I, O, E> {
             };
         }
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_arch = "wasm64"))]
         {
             use tungstenite::Message as TMessage;
             let mut conn = self.native.as_ref().unwrap().receiver.lock().await;
@@ -454,7 +454,7 @@ impl<I, O, E> Websocket<I, O, E> {
             };
         }
 
-        unimplemented!("Non web wasm32 clients are not supported yet")
+        unimplemented!("Non web wasm64 clients are not supported yet")
     }
 
     pub fn protocol(&self) -> Option<&str> {
@@ -487,7 +487,7 @@ impl<In, Out, E> IntoResponse for Websocket<In, Out, E> {
 impl<I, O, E> FromResponse<UpgradingWebsocket> for Websocket<I, O, E> {
     fn from_response(res: UpgradingWebsocket) -> impl Future<Output = Result<Self, ServerFnError>> {
         async move {
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(not(target_arch = "wasm64"))]
             let native = res.native;
 
             #[cfg(feature = "web")]
@@ -501,7 +501,7 @@ impl<I, O, E> FromResponse<UpgradingWebsocket> for Websocket<I, O, E> {
 
             Ok(Websocket {
                 protocol: res.protocol,
-                #[cfg(not(target_arch = "wasm32"))]
+                #[cfg(not(target_arch = "wasm64"))]
                 native,
                 #[cfg(feature = "web")]
                 web,
@@ -586,7 +586,7 @@ impl WebSocketOptions {
             response: Some(response),
             _in: PhantomData,
 
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(not(target_arch = "wasm64"))]
             native: None,
 
             #[cfg(feature = "web")]
@@ -608,7 +608,7 @@ impl IntoRequest<UpgradingWebsocket> for WebSocketOptions {
     ) -> impl Future<Output = std::result::Result<UpgradingWebsocket, RequestError>> + 'static {
         async move {
             #[cfg(feature = "web")]
-            if cfg!(target_arch = "wasm32") {
+            if cfg!(target_arch = "wasm64") {
                 let url_path = request.url().path();
                 let url_query = request.url().query();
                 let url_fragment = request.url().fragment();
@@ -634,12 +634,12 @@ impl IntoRequest<UpgradingWebsocket> for WebSocketOptions {
                 return Ok(UpgradingWebsocket {
                     protocol: Some(socket.protocol()),
                     web: Some(socket),
-                    #[cfg(not(target_arch = "wasm32"))]
+                    #[cfg(not(target_arch = "wasm64"))]
                     native: None,
                 });
             }
 
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(not(target_arch = "wasm64"))]
             {
                 let response = native::send_request(request, &self.protocols).await?;
 
@@ -655,7 +655,7 @@ impl IntoRequest<UpgradingWebsocket> for WebSocketOptions {
                 });
             }
 
-            unimplemented!("Non web wasm32 clients are not supported yet")
+            unimplemented!("Non web wasm64 clients are not supported yet")
         }
     }
 }
@@ -694,7 +694,7 @@ pub struct UpgradingWebsocket {
     #[cfg(feature = "web")]
     web: Option<gloo_net::websocket::futures::WebSocket>,
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_arch = "wasm64"))]
     native: Option<native::SplitSocket>,
 }
 
@@ -878,14 +878,14 @@ pub enum WebsocketError {
     #[error("WebSocket is not initialized on this platform")]
     Uninitialized,
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_arch = "wasm64"))]
     #[error("websocket upgrade failed")]
     Handshake(#[from] native::HandshakeError),
 
     #[error("reqwest error")]
     Reqwest(#[from] reqwest::Error),
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_arch = "wasm64"))]
     #[error("tungstenite error")]
     Tungstenite(#[from] tungstenite::Error),
 
@@ -1185,7 +1185,7 @@ impl From<u16> for CloseCode {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_arch = "wasm64"))]
 mod native {
     use std::borrow::Cow;
 

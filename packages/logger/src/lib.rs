@@ -80,7 +80,7 @@ pub fn init(level: Level) -> Result<(), SetGlobalDefaultError> {
     use re-format the tracing spans to be better integrated with `dx`
     */
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_arch = "wasm64")]
     {
         use tracing_subscriber::layer::SubscriberExt;
         use tracing_subscriber::Registry;
@@ -94,7 +94,7 @@ pub fn init(level: Level) -> Result<(), SetGlobalDefaultError> {
         set_global_default(reg)
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_arch = "wasm64"))]
     {
         let sub = tracing_subscriber::FmtSubscriber::builder()
             .with_max_level(level)

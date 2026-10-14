@@ -381,7 +381,7 @@ impl AppBuilder {
             Some(val) => val,
             None if matches!(
                 self.build.triple.architecture,
-                Architecture::Wasm32 | Architecture::Wasm64
+                Architecture::Wasm64 | Architecture::Wasm64
             ) =>
             {
                 0

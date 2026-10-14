@@ -327,7 +327,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@1.88.0
         with:
-          targets: wasm32-unknown-unknown
+          targets: wasm64-unknown-unknown
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
         with:
@@ -357,7 +357,6 @@ jobs:
           path: ${{ env.DIOXUS_WORKSPACE }}/packages/playwright-tests/playwright-report/
           retention-days: 30
 
-
   playwright:
     needs: check-paths
     if: github.event.pull_request.draft == false && needs.check-paths.outputs.rust == 'true'
@@ -367,8 +366,16 @@ jobs:
     strategy:
       matrix:
         include:
-          - { os: warp-ubuntu-latest-x64-8x, name: "Linux (stable)", toolchain: "1.88.0" }
-          - { os: warp-ubuntu-latest-x64-8x, name: "Linux (beta)", toolchain: beta }
+          - {
+              os: warp-ubuntu-latest-x64-8x,
+              name: "Linux (stable)",
+              toolchain: "1.88.0",
+            }
+          - {
+              os: warp-ubuntu-latest-x64-8x,
+              name: "Linux (beta)",
+              toolchain: beta,
+            }
     steps:
       # Do our best to cache the toolchain and node install steps
       - uses: actions/checkout@v5
@@ -387,7 +394,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
-          targets: x86_64-unknown-linux-gnu,wasm32-unknown-unknown
+          targets: x86_64-unknown-linux-gnu,wasm64-unknown-unknown
       - uses: Swatinem/rust-cache@v2
         with:
           key: "playwright-${{ matrix.toolchain }}-${{ runner.os }}"
@@ -415,8 +422,6 @@ jobs:
           name: playwright-report-${{ matrix.toolchain }}-${{ runner.os }}
           path: ./packages/playwright-tests/playwright-report/
           retention-days: 30
-
-
 
   test:
     needs: check-paths

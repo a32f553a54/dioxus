@@ -4,7 +4,7 @@
 /// Only on wasm with the wasm-split feature will we prefer the `maybe_wasm_split` variant that emits
 /// the "lefthand" tokens. Otherwise, we emit the non-wasm_split tokens
 #[doc(hidden)]
-#[cfg(all(feature = "wasm-split", target_arch = "wasm32"))]
+#[cfg(all(feature = "wasm-split", target_arch = "wasm64"))]
 #[macro_export]
 macro_rules! maybe_wasm_split {
     (
@@ -24,7 +24,7 @@ macro_rules! maybe_wasm_split {
 /// Only on wasm with the wasm-split feature will we prefer the `maybe_wasm_split` variant that emits
 /// the "lefthand" tokens. Otherwise, we emit the non-wasm_split tokens
 #[doc(hidden)]
-#[cfg(any(not(feature = "wasm-split"), not(target_arch = "wasm32")))]
+#[cfg(any(not(feature = "wasm-split"), not(target_arch = "wasm64")))]
 #[macro_export]
 macro_rules! maybe_wasm_split {
     (

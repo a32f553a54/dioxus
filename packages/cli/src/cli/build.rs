@@ -86,12 +86,12 @@ impl CommandWithPlatformOverrides<BuildArgs> {
     ///
     /// Some examples:
     /// ```shell, ignore
-    /// dx serve --target wasm32-unknown-unknown --fullstack            # serves both client and server
-    /// dx serve --target wasm32-unknown-unknown --features fullstack   # serves both client and server
-    /// dx serve --target wasm32-unknown-unknown                        # only serves the client
-    /// dx serve --target wasm32-unknown-unknown                        # servers both if `fullstack` is enabled on dioxus
-    /// dx serve @client --target wasm32-unknown-unknown                # only serves the client
-    /// dx serve @client --target wasm32-unknown-unknown --fullstack    # serves both client and server
+    /// dx serve --target wasm64-unknown-unknown --fullstack            # serves both client and server
+    /// dx serve --target wasm64-unknown-unknown --features fullstack   # serves both client and server
+    /// dx serve --target wasm64-unknown-unknown                        # only serves the client
+    /// dx serve --target wasm64-unknown-unknown                        # servers both if `fullstack` is enabled on dioxus
+    /// dx serve @client --target wasm64-unknown-unknown                # only serves the client
+    /// dx serve @client --target wasm64-unknown-unknown --fullstack    # serves both client and server
     /// ```
     ///
     /// Currently it is not possible to serve the server without the client, but this could be added in the future.

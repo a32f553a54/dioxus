@@ -60,7 +60,7 @@ TLS presents challenges for hot-patching:
 
 - **Desktop**: Linux, macOS, Windows (x86_64, aarch64)
 - **Mobile**: Android (arm64-v8a, armeabi-v7a), iOS Simulator
-- **Web**: WASM32 (limited module reloading)
+- **Web**: WASM64 (limited module reloading)
 - **Not supported**: iOS device (code-signing)
 
 ## RSX Hot Reload

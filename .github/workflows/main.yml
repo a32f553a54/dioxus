@@ -327,7 +327,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@1.88.0
         with:
-          targets: wasm32-unknown-unknown
+          targets: wasm64-unknown-unknown
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
         with:
@@ -387,7 +387,7 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.toolchain }}
-          targets: x86_64-unknown-linux-gnu,wasm32-unknown-unknown
+          targets: x86_64-unknown-linux-gnu,wasm64-unknown-unknown
       - uses: Swatinem/rust-cache@v2
         with:
           key: "playwright-${{ matrix.toolchain }}-${{ runner.os }}"

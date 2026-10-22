@@ -9,7 +9,7 @@
 TARGET_DIR=../../../target
 
 # build the harness
-cargo rustc --package wasm-split-harness --target wasm32-unknown-unknown --profile wasm-split-release -- -Clink-args=--emit-relocs
+cargo rustc --package wasm-split-harness --target wasm64-unknown-unknown --profile wasm-split-release -- -Clink-args=--emit-relocs
 
 # for a much smaller compile, you can crank up the flags. However, dioxus relies heavily on location detail, so we can't disable that
 #
@@ -19,7 +19,7 @@ cargo rustc --package wasm-split-harness --target wasm32-unknown-unknown --profi
 #   -Z build-std=std,panic_abort \
 #   -Z build-std-features="optimize_for_size" \
 #   -Z build-std-features=panic_immediate_abort \
-#   --target wasm32-unknown-unknown \
+#   --target wasm64-unknown-unknown \
 #   --no-default-features \
 #   --profile wasm-split-release \
 #   -- -Clink-args=--emit-relocs
@@ -34,7 +34,7 @@ mkdir -p data/harness/split
 mkdir -p data/harness/split_not
 
 # copy the output wasm file to the harness dir
-cp $TARGET_DIR/wasm32-unknown-unknown/wasm-split-release/wasm-split-harness.wasm data/harness/input.wasm
+cp $TARGET_DIR/wasm64-unknown-unknown/wasm-split-release/wasm-split-harness.wasm data/harness/input.wasm
 
 # Run wasm-bindgen on this module, without splitting it
 wasm-bindgen data/harness/input.wasm --out-dir data/harness/split_not --target web --out-name main --no-demangle --no-typescript --keep-lld-exports --keep-debug

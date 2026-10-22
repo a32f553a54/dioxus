@@ -454,7 +454,7 @@ impl<I, O, E> Websocket<I, O, E> {
             };
         }
 
-        unimplemented!("Non web wasm32 clients are not supported yet")
+        unimplemented!("Non web wasm clients are not supported yet")
     }
 
     pub fn protocol(&self) -> Option<&str> {
@@ -655,7 +655,7 @@ impl IntoRequest<UpgradingWebsocket> for WebSocketOptions {
                 });
             }
 
-            unimplemented!("Non web wasm32 clients are not supported yet")
+            unimplemented!("Non web wasm clients are not supported yet")
         }
     }
 }

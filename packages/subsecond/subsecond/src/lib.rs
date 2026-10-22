@@ -199,7 +199,7 @@
 //! - Linux (x86_64, aarch64)
 //! - macOS (x86_64, aarch64)
 //! - Windows (x86_64, arm64)
-//! - WebAssembly (wasm32)
+//! - WebAssembly (wasm32, wasm64)
 //!
 //! If you have a new platform you'd like to see supported, please open an issue on the Subsecond repository.
 //! We are keen to add support for new platforms like wasm64, riscv64, and more.

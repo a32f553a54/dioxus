@@ -199,7 +199,11 @@ impl HotpatchModuleCache {
             //
             // We need to take an extra step to account for merged functions by mapping function index
             // to a set of functions that point to the same index.
-            _ if triple.architecture == Architecture::Wasm32 => {
+            _ if matches!(
+                triple.architecture,
+                Architecture::Wasm32 | Architecture::Wasm64
+            ) =>
+            {
                 let bytes = std::fs::read(original)?;
                 let ParsedModule {
                     module, symbols, ..
@@ -884,6 +888,7 @@ pub fn create_undefined_symbol_stub(
         match triple.architecture {
             Architecture::Aarch64(_) => object::Architecture::Aarch64,
             Architecture::Wasm32 => object::Architecture::Wasm32,
+            Architecture::Wasm64 => object::Architecture::Wasm64,
             Architecture::X86_64 => object::Architecture::X86_64,
             _ => return Err(PatchError::UnsupportedPlatform(triple.to_string())),
         },

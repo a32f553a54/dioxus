@@ -314,7 +314,7 @@ Loader returns `Result` for robust error handling.
 1. **Async boundaries**: Split points must be async functions
 2. **Call graph static**: Determined at build time
 3. **No dynamic imports**: All split points known at compile time
-4. **WASM-specific**: Only works with wasm32 target
+4. **WASM-specific**: Only works with wasm32 or wasm64 target
 
 ## Future Considerations
 

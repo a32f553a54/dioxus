@@ -102,7 +102,7 @@ impl<S> IntoRequest for MultipartFormData<S> {
                 return _req.send_multipart(&data).await;
             }
 
-            unimplemented!("Non web wasm32 clients are not supported yet")
+            unimplemented!("Non web wasm clients are not supported yet")
         }
     }
 }

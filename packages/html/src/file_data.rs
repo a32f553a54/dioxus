@@ -160,7 +160,7 @@ mod serialize {
                     return Ok(contents);
                 }
 
-                #[cfg(not(target_arch = "wasm32"))]
+                #[cfg(not(target_family = "wasm"))]
                 if path.exists() {
                     return Ok(std::fs::read(path).map(Bytes::from)?);
                 }
@@ -183,7 +183,7 @@ mod serialize {
                     return Ok(String::from_utf8(contents.to_vec())?);
                 }
 
-                #[cfg(not(target_arch = "wasm32"))]
+                #[cfg(not(target_family = "wasm"))]
                 if path.exists() {
                     return Ok(std::fs::read_to_string(path)?);
                 }
@@ -211,7 +211,7 @@ mod serialize {
                     return Ok(contents);
                 }
 
-                #[cfg(not(target_arch = "wasm32"))]
+                #[cfg(not(target_family = "wasm"))]
                 if path.exists() {
                     return Ok(std::fs::read(path).map(Bytes::from)?);
                 }

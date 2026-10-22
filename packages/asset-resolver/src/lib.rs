@@ -108,7 +108,7 @@ pub enum AssetPathError {
 /// ```
 #[allow(unused)]
 pub fn asset_path(asset: impl ToString) -> Result<PathBuf, AssetPathError> {
-    #[cfg(all(feature = "web", target_arch = "wasm32"))]
+    #[cfg(all(feature = "web", target_family = "wasm"))]
     return Err(AssetPathError::CannotRepresentAsPath);
 
     #[cfg(feature = "native")]

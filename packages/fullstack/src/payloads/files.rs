@@ -127,7 +127,7 @@ impl IntoRequest for FileStream {
             };
 
             #[cfg(feature = "web")]
-            if cfg!(target_arch = "wasm32") {
+            if cfg!(target_family = "wasm") {
                 use js_sys::escape;
                 use wasm_bindgen::JsCast;
 
@@ -152,7 +152,7 @@ impl IntoRequest for FileStream {
                     .await;
             }
 
-            #[cfg(not(target_arch = "wasm32"))]
+            #[cfg(not(target_family = "wasm"))]
             {
                 use std::ascii::escape_default;
 

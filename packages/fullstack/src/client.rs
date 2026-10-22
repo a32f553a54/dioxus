@@ -117,7 +117,7 @@ impl ClientRequest {
         #[allow(unused_mut)]
         let mut client = reqwest::Client::builder();
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_family = "wasm"))]
         {
             use std::sync::Arc;
             use std::sync::LazyLock;
@@ -182,7 +182,7 @@ impl ClientRequest {
     }
 
     /// Sends the request with multipart/form-data body constructed from the given FormData.
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     pub async fn send_multipart(
         self,
         form: &dioxus_html::FormData,
@@ -242,11 +242,11 @@ impl ClientRequest {
     /// Sends the request with an empty body.
     pub async fn send_empty_body(self) -> Result<ClientResponse, RequestError> {
         #[cfg(feature = "web")]
-        if cfg!(target_arch = "wasm32") {
+        if cfg!(target_family = "wasm") {
             return self.send_js_value(wasm_bindgen::JsValue::UNDEFINED).await;
         }
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_family = "wasm"))]
         {
             let res = self
                 .new_reqwest_request()
@@ -268,13 +268,13 @@ impl ClientRequest {
         bytes: impl Into<Bytes>,
     ) -> Result<ClientResponse, RequestError> {
         #[cfg(feature = "web")]
-        if cfg!(target_arch = "wasm32") {
+        if cfg!(target_family = "wasm") {
             let bytes = bytes.into();
             let uint_8_array = js_sys::Uint8Array::from(&bytes[..]);
             return self.send_js_value(uint_8_array.into()).await;
         }
 
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_family = "wasm"))]
         {
             let res = self
                 .new_reqwest_request()
@@ -320,7 +320,7 @@ impl ClientRequest {
         self,
         stream: impl Stream<Item = Result<Bytes, StreamingError>> + Send + 'static,
     ) -> Result<ClientResponse, RequestError> {
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(not(target_family = "wasm"))]
         {
             let res = self
                 .new_reqwest_request()
@@ -552,7 +552,7 @@ mod native {
         }
 
         fn version(&self) -> http::Version {
-            #[cfg(target_arch = "wasm32")]
+            #[cfg(target_family = "wasm")]
             {
                 return http::Version::HTTP_2;
             }

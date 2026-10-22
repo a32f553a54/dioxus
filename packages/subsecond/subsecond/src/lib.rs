@@ -547,7 +547,7 @@ pub unsafe fn apply_patch(mut table: JumpTable) -> Result<(), PatchError> {
     };
 
     // On wasm, we need to download the module, compile it, and then run it.
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_family = "wasm")]
     wasm_bindgen_futures::spawn_local(async move {
         use js_sys::{
             ArrayBuffer, Object, Reflect,

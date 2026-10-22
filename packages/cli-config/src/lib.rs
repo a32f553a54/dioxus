@@ -227,7 +227,7 @@ pub fn base_path() -> Option<String> {
     // This may trigger when compiling to the server if you depend on another crate that pulls in
     // the web feature. It might be better for the renderers to provide the current platform
     // as a global context
-    #[cfg(all(feature = "web", target_arch = "wasm32"))]
+    #[cfg(all(feature = "web", target_family = "wasm"))]
     {
         return web_base_path();
     }
@@ -316,12 +316,12 @@ pub fn android_session_cache_dir() -> PathBuf {
 /// The unique build id for this application, used to disambiguate between different builds of the same
 /// application.
 pub fn build_id() -> u64 {
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_family = "wasm")]
     {
         0
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     {
         std::env::var(BUILD_ID)
             .ok()
